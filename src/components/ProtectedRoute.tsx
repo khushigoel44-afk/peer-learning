@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
-import { supabase } from "@/lib/supabase";
+import { Navigate, useLocation } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/useAuth";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 const [user, setUser] = useState<any>(null);
 const [loading, setLoading] = useState(true);
+const { needsOnboarding } = useAuth();
+const location = useLocation();
 
 useEffect(() => {
 // 🔥 Get current session
@@ -37,6 +40,10 @@ return ( <div className="flex min-h-screen items-center justify-center"> <div cl
 // 🔐 Not logged in → redirect safely
 if (!user) {
 return <Navigate to="/login" replace />;
+}
+
+if (needsOnboarding && location.pathname !== "/onboarding") {
+return <Navigate to="/onboarding" replace />;
 }
 
 return <>{children}</>;

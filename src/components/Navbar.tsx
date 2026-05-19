@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
+import { useRole } from "@/contexts/RoleContext";
 
 
 import {
@@ -17,7 +18,7 @@ import {
   Shield,
 } from "lucide-react";
 
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 
 const Navbar = () => {
 
@@ -25,6 +26,7 @@ const Navbar = () => {
   const [user, setUser] = useState<any>(null);
   const [profileName, setProfileName] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
+  const { currentMode, setMode, isDualRole } = useRole();
 
   const location = useLocation();
   if (location.pathname === "/") return null;
@@ -205,6 +207,29 @@ const Navbar = () => {
           {user ? (
 
             <>
+              {isDualRole && (
+                <div className="flex rounded-full border border-white/20 p-0.5 text-sm">
+                  <button
+                    type="button"
+                    onClick={() => setMode("learner")}
+                    className={currentMode === "learner"
+                      ? "bg-emerald-500 text-slate-950 rounded-full px-3 py-1 font-medium"
+                      : "text-slate-300 px-3 py-1 hover:text-white"}
+                  >
+                    Learner
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMode("mentor")}
+                    className={currentMode === "mentor"
+                      ? "bg-emerald-500 text-slate-950 rounded-full px-3 py-1 font-medium"
+                      : "text-slate-300 px-3 py-1 hover:text-white"}
+                  >
+                    Mentor
+                  </button>
+                </div>
+              )}
+
               {/* PROFILE */}
               <Link to="/profile">
 
