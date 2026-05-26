@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import {
   Trophy,
@@ -178,6 +178,13 @@ const Leaderboard = () => {
   }, [user, filter]);
 
   // REALTIME
+  // We use a ref so the realtime listener always calls the latest fetchLeaderboard, 
+  // preventing stale closures (where filter = "All Time" and user = null) from overwriting rank.
+  const fetchRef = useRef(fetchLeaderboard);
+  useEffect(() => {
+    fetchRef.current = fetchLeaderboard;
+  }, [fetchLeaderboard]);
+
   useEffect(() => {
 
     const channel = supabase
@@ -190,7 +197,7 @@ const Leaderboard = () => {
           table: "leaderboard",
         },
         () => {
-          fetchLeaderboard();
+          fetchRef.current();
         }
       )
       .subscribe();
