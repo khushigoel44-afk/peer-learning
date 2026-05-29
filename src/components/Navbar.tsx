@@ -30,6 +30,7 @@ import {
   Shield,
   Moon,
   Users,
+  BriefcaseBusiness,
 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -69,7 +70,6 @@ const Navbar = () => {
     fetchProfile();
   }, [user]);
 
-  if (location.pathname === "/") return null;
 
   // LOGOUT
   const handleLogout = async () => {
@@ -111,6 +111,11 @@ const Navbar = () => {
           to: "/leaderboard",
           label: "Ranks",
           icon: Trophy,
+        },
+        {
+          to: "/portfolio",
+          label: "Portfolio",
+          icon: BriefcaseBusiness,
         },
         ...(isAdmin
           ? [
