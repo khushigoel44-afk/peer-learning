@@ -3,7 +3,7 @@ import crypto from "crypto";
 import User from "../models/user.js";
 import { env } from "../config.js";
 import { sendEmail } from "../utils/sendEmail.js";
-import { asyncHandler } from "../utils/asyncHandler.js";
+import { HttpError } from "../utils/httpError.js";
 
 const RESET_TOKEN_TTL_MS = 15 * 60 * 1000;
 const GENERIC_RESET_MESSAGE =
@@ -23,17 +23,18 @@ const buildFrontendBaseUrl = (req) => {
   return `${protocol}://${req.get("host")}`;
 };
 
-export const forgotPassword = asyncHandler(async (req, res) => {
-  const { email } = req.body;
-
-    const normalizedEmail = String(email).trim().toLowerCase();
+export const forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const normalizedEmail = email.trim().toLowerCase();
     const user = await User.findOne({ email: normalizedEmail });
 
     if (!user) {
-      return res.status(200).json({
+      res.status(200).json({
         success: true,
         message: GENERIC_RESET_MESSAGE,
       });
+      return;
     }
 
     const rawResetToken = crypto.randomBytes(32).toString("hex");
@@ -56,21 +57,23 @@ export const forgotPassword = asyncHandler(async (req, res) => {
       user.resetPasswordExpire = undefined;
       await user.save({ validateBeforeSave: false });
 
-      return res.status(500).json({
-        success: false,
-        message: "Unable to send reset email. Please try again later.",
-      });
+      next(new HttpError(500, "Unable to send reset email. Please try again later.", { cause: mailError.message }));
+      return;
     }
 
-  res.status(200).json({
-    success: true,
-    message: GENERIC_RESET_MESSAGE,
-  });
-});
+    res.status(200).json({
+      success: true,
+      message: GENERIC_RESET_MESSAGE,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
-export const resetPassword = asyncHandler(async (req, res) => {
-  const { token } = req.params;
-  const password = req.body.password || req.body.newPassword;
+export const resetPassword = async (req, res, next) => {
+  try {
+    const { token } = req.params;
+    const password = req.body.password || req.body.newPassword;
 
     const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
 
@@ -80,10 +83,8 @@ export const resetPassword = asyncHandler(async (req, res) => {
     });
 
     if (!user) {
-      return res.status(400).json({
-        success: false,
-        message: "Reset token is invalid or has expired",
-      });
+      next(new HttpError(400, "Reset token is invalid or has expired"));
+      return;
     }
 
     user.password = await bcrypt.hash(password, 10);
@@ -91,8 +92,11 @@ export const resetPassword = asyncHandler(async (req, res) => {
     user.resetPasswordExpire = undefined;
     await user.save();
 
-  res.status(200).json({
-    success: true,
-    message: "Password has been reset successfully",
-  });
-});
+    res.status(200).json({
+      success: true,
+      message: "Password has been reset successfully",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
