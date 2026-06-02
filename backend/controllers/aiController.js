@@ -62,7 +62,14 @@ const extractMessageContent = (data) => {
 };
 
 const parseStrictSummaryContent = (content) => {
-  const direct = summaryResponseSchema.safeParse(JSON.parse(content));
+  let parsed;
+  try {
+    parsed = JSON.parse(content);
+  } catch {
+    throw new Error("Model did not return a valid summary JSON payload.");
+  }
+
+  const direct = summaryResponseSchema.safeParse(parsed);
   if (direct.success) {
     return direct.data;
   }
@@ -145,6 +152,13 @@ export const askAI = async (req, res, next) => {
       answer: content,
     });
   } catch (error) {
+    if (error.name === "AbortError") {
+      return res.status(503).json({
+        statusCode: 503,
+        message: "AI request timed out. Please try again.",
+        details: { retryable: true, reason: "timeout" },
+      });
+    }
     next(error);
   }
 };
@@ -195,10 +209,15 @@ export const generateSessionSummary = async (req, res, next) => {
 
     res.json(parseStrictSummaryContent(content));
   } catch (error) {
-    if (error.message === "Model did not return a valid summary JSON payload.") {
-      next(new HttpError(502, "Summary generation returned an invalid response format."));
+    const httpError = error.message === "Model did not return a valid summary JSON payload."
+      ? new HttpError(502, "Summary generation returned an invalid response format.")
+      : error;
+    if (typeof next === "function") {
+      next(httpError);
     } else {
-      next(error);
+      throw httpError;
     }
   }
 };
+
+

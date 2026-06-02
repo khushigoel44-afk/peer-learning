@@ -87,9 +87,11 @@ describe("aiController", () => {
     };
     const res = createRes();
 
-    await expect(generateSessionSummary(req, res)).rejects.toMatchObject({
+    const next = vi.fn();
+    await generateSessionSummary(req, res, next);
+    expect(next).toHaveBeenCalledWith(expect.objectContaining({
       name: "HttpError",
       statusCode: 502,
-    });
+    }));
   });
 });

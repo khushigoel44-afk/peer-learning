@@ -4,6 +4,8 @@ import cors from "cors";
 import chatRoutes from "./routers/chatRoutes.js";
 import aiRoutes from "./routers/aiRoutes.js";
 import matchRoutes from "./routers/matchRoutes.js";
+import { validate } from "./middlewares/validate.js";
+import { authSchemas } from "./validation/schemas.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
 
 const app = express();
@@ -26,6 +28,10 @@ app.use((req, res, next) => {
 
 app.get("/health", (_req, res) => {
 	res.status(200).json({ ok: true });
+});
+
+app.post("/api/forgot-password", validate(authSchemas.forgotPassword), (req, res) => {
+  res.json({ ok: true });
 });
 
 app.use("/api/ai", aiRoutes);
