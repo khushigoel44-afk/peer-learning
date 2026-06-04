@@ -7,10 +7,27 @@ const isValidEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value))
 
 // Ensure the reset URL uses a safe scheme before embedding it in an email.
 // A javascript: or data: URL would execute in some email clients.
-const isSafeUrl = (value) => {
+const isSafeUrl = (value, expectedDomain) => {
   try {
     const parsed = new URL(String(value));
-    return parsed.protocol === "https:" || parsed.protocol === "http:";
+
+    // Must be https in production
+    if (process.env.NODE_ENV === 'production' && parsed.protocol !== 'https:') {
+      return false;
+    }
+
+    // Must match expected frontend domain
+    const allowedDomain = new URL(expectedDomain).hostname;
+    if (parsed.hostname !== allowedDomain) {
+      return false;
+    }
+
+    // Must have reset path
+    if (!parsed.pathname.includes('/reset')) {
+      return false;
+    }
+
+    return true;
   } catch {
     return false;
   }
