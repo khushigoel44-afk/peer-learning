@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/useAuth';
 import ParticipantCard from "./studyroom/ParticipantCard";
@@ -106,7 +107,7 @@ export default function Room() {
     if (error) {
       console.error("Error fetching room:", error);
       if (error.code === 'PGRST116') {
-        alert("Room not found or you don't have access.");
+        toast.error("Room not found or you don't have access.");
         navigate('/rooms');
       }
     }
@@ -145,7 +146,7 @@ export default function Room() {
     
     if (error) {
       console.error("Database insert error:", error);
-      alert("Failed to send message. Check console for details.");
+      toast.error("Failed to send message. Please try again.");
     }
   };
 
@@ -159,9 +160,9 @@ export default function Room() {
     
     if (error) {
       console.error("Invite error:", error);
-      alert(error.message || "Failed to invite user.");
+      toast.error(error.message || "Failed to invite user.");
     } else {
-      alert(`Invited ${inviteEmail} successfully!`);
+      toast.success(`Invited ${inviteEmail} successfully!`);
       setInviteEmail('');
       setShowInviteUI(false);
     }
