@@ -91,7 +91,7 @@ const EditProfile = () => {
         .update({
           name: profile.name,
           bio: profile.bio,
-          skills: Array.isArray(profile.skills) ? profile.skills : profile.skills.split(",").map((s: string) => s.trim()),
+          skills: Array.isArray(profile.skills) ? profile.skills : profile.skills.split(",").map((s: string) => s.trim()).filter(Boolean),
           avatar_url: profile.avatar_url,
         })
         .eq("id", user.id);
