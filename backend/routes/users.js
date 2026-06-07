@@ -2,18 +2,23 @@ import express from "express";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import { fileURLToPath } from "url";
 import { fileTypeFromFile } from "file-type";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const uploadsRoot = path.join(__dirname, "../../uploads");
+const profilesDir = path.join(uploadsRoot, "profiles");
 
 const router = express.Router();
 
 // Storage configuration for profile photos
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const dir = 'uploads/profiles/';
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
+    if (!fs.existsSync(profilesDir)) {
+      fs.mkdirSync(profilesDir, { recursive: true });
     }
-    cb(null, dir);
+    cb(null, profilesDir);
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
@@ -32,7 +37,9 @@ const upload = multer({
     if (file.mimetype.startsWith("image/")) {
       cb(null, true);
     } else {
-      cb(new Error("Only image files are allowed!"), false);
+      const error = new Error("Only image files are allowed!");
+      error.code = "UNSUPPORTED_MEDIA_TYPE";
+      cb(error, false);
     }
   }
 });
@@ -43,10 +50,23 @@ const uploadProfilePhoto = (req, res, next) => {
       return res.status(413).json({ error: "Profile photo exceeds 5MB limit." });
     }
     if (err) {
-      return res.status(415).json({ error: err.message || "Unsupported Media Type" });
+      if (err.code === "UNSUPPORTED_MEDIA_TYPE") {
+         return res.status(415).json({ error: err.message });
+      }
+      return next(err);
     }
     next();
   });
+};
+
+const safeUnlink = (filePath) => {
+  try {
+    if (filePath && fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
+  } catch (err) {
+    // Ignore error to not break response
+  }
 };
 
 // User profile photo upload endpoint
@@ -58,11 +78,11 @@ router.post("/upload-photo", uploadProfilePhoto, async (req, res) => {
   try {
     const detected = await fileTypeFromFile(req.file.path);
     if (!detected || !detected.mime.startsWith("image/")) {
-      fs.unlinkSync(req.file.path);
+      safeUnlink(req.file.path);
       return res.status(415).json({ error: "Only valid image files are allowed." });
     }
   } catch (err) {
-    fs.unlinkSync(req.file.path);
+    safeUnlink(req.file.path);
     return res.status(500).json({ error: "Error validating file type." });
   }
 
