@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const TermsAndConditions: React.FC = () => {
   return (
@@ -128,8 +129,60 @@ const TermsAndConditions: React.FC = () => {
           </section>
 
           <section>
+  <h2 className="text-2xl font-semibold text-cyan-400 mb-4">
+    9. Mentorship Interactions
+  </h2>
+  <p className="text-gray-300 leading-relaxed">
+    PeerLearn facilitates connections between learners and mentors. Users are
+    expected to interact respectfully, professionally, and constructively
+    during mentorship sessions. Mentors should provide guidance based on their
+    experience and knowledge, while learners are responsible for their own
+    decisions and actions. PeerLearn does not guarantee specific outcomes from
+    mentorship interactions and is not responsible for advice shared between
+    users.
+  </p>
+</section>
+
+<section>
+  <h2 className="text-2xl font-semibold text-cyan-400 mb-4">
+    10. User-Generated Content
+  </h2>
+  <p className="text-gray-300 leading-relaxed">
+    Users may create, upload, or share content including messages, resources,
+    project submissions, portfolio content, reviews, and community posts. Users
+    retain ownership of their original content but grant PeerLearn a
+    non-exclusive, worldwide license to display, store, and distribute such
+    content as necessary to operate and improve the platform. Users are solely
+    responsible for ensuring that their content complies with applicable laws
+    and does not infringe on the rights of others.
+  </p>
+</section>
+
+<section>
+  <h2 className="text-2xl font-semibold text-cyan-400 mb-4">
+    11. Privacy and Data Protection
+  </h2>
+  <p className="text-gray-300 leading-relaxed">
+    PeerLearn values user privacy and handles personal information in
+    accordance with our Privacy Policy. By using the platform, you acknowledge
+    and agree to the collection, use, and processing of information as
+    described in our Privacy Policy.
+  </p>
+
+  <p className="mt-4 text-gray-300">
+    For more information, please review our{" "}
+    <Link
+      to="/privacy-policy"
+      className="text-cyan-400 hover:text-cyan-300 hover:underline"
+    >
+      Privacy Policy
+    </Link>.
+  </p>
+</section>
+          
+          <section>
             <h2 className="text-2xl font-semibold text-cyan-400 mb-4">
-              9. Contact Us
+              12. Contact Us
             </h2>
             <p className="text-gray-300 leading-relaxed">
               If you have any questions regarding these Terms and Conditions,
