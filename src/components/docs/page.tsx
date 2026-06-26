@@ -1,202 +1,228 @@
-import { motion } from "framer-motion";
-import { ChevronDown, Sparkles, Shield, GitBranch, Users } from "lucide-react";
-import { useState } from "react";
+import React from "react";
+import Link from "next/link";
+import {
+  FileText,
+  Users,
+  Shield,
+  AlertTriangle,
+  GitPullRequest,
+  MessageSquare,
+  BookOpen,
+  Lightbulb,
+} from "lucide-react";
 
-const docsSections = [
-  {
-    id: 0,
-    icon: <Shield className="h-6 w-6" />,
-    title: "Code of Conduct",
-    category: "Community",
-    content: `
-## Our Pledge
-We are committed to creating a welcoming, respectful, and inclusive environment for everyone participating in this project.
-
-## Expected Behavior
-- Be respectful and supportive
-- Use inclusive and professional language
-- Accept constructive feedback gracefully
-- Collaborate positively with others
-
-## Unacceptable Behavior
-- Harassment or discrimination
-- Offensive or abusive language
-- Personal attacks or trolling
-- Sharing private information without permission
-
-## Enforcement
-Violations may result in warnings, temporary restrictions, or permanent removal from the community.
-    `,
-  },
-  {
-    id: 1,
-    icon: <GitBranch className="h-6 w-6" />,
-    title: "Contributing Guidelines",
-    category: "Development",
-    content: `
-## How to Contribute
-
-### 1. Forking the Repository
-1. Click the **Fork** button at the top right.
-2. Clone your fork:
-   \`\`\`bash
-   git clone https://github.com/<your-username>/peer-learning.git
-   \`\`\`
-3. Add upstream remote:
-   \`\`\`bash
-   git remote add upstream https://github.com/durdana3105/peer-learning.git
-   \`\`\`
-
-### 2. Creating Branches
-Always work on a new branch:
-\`\`\`bash
-git checkout -b feature/your-feature-name
-\`\`\`
-
-### 3. Making Commits
-- Use clear, imperative commit messages
-- Keep changes focused
-
-### 4. Coding Standards
-- Write clean, readable code
-- Follow existing project structure
-- Add comments for complex logic
-- Write/update tests
-
-### 5. Submitting Pull Requests
-1. Push your branch
-2. Open a PR against the \`main\` branch
-3. Provide clear description and reference any issues
-
----
-
-Thank you for contributing to PeerLearn!
-    `,
-  },
-  {
-    id: 2,
-    icon: <Users className="h-6 w-6" />,
-    title: "Full Contributing Guide",
-    category: "Development",
-    content: `
-Thank you for your interest in contributing to the Peer Learning project!
-
-### Quick Steps
-1. Fork the repository
-2. Clone your fork locally
-3. Create a new branch
-4. Make your changes
-5. Commit with meaningful messages
-6. Push and create a Pull Request
-
-### Contribution Rules
-- Write clean and readable code
-- Follow the existing project structure
-- Test your changes before submitting
-- Keep pull requests focused and small
-- Be respectful and professional
-
-### Reporting Issues
-- Open an issue with clear description
-- Include steps to reproduce (if applicable)
-    `,
-  },
-];
-
-export default function Docs() {
-  const [openSection, setOpenSection] = useState<number | null>(null);
-
+export default function DocsPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#020617] via-[#071127] to-[#020B1F] text-white">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px]" />
+    <div className="max-w-4xl mx-auto px-6 py-12">
+      <div className="text-center mb-12">
+        <h1 className="text-4xl font-bold tracking-tight mb-4">
+          Project Guidelines
+        </h1>
+        <p className="text-xl text-gray-600 dark:text-gray-400">
+          Your central guide to contributing, participating, and collaborating
+          in the Peer Learning project.
+        </p>
+      </div>
 
-      <div className="relative mx-auto max-w-5xl px-6 py-24">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-16 text-center"
-        >
-          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl border border-cyan-400/20 bg-cyan-400/10">
-            <Sparkles className="h-10 w-10 text-cyan-400" />
+      <div className="space-y-16">
+        {/* 1. Project Overview */}
+        <section>
+          <div className="flex items-center gap-3 mb-6">
+            <BookOpen className="w-8 h-8 text-blue-600" />
+            <h2 className="text-3xl font-semibold">Project Overview</h2>
           </div>
-          <h1 className="text-6xl font-black tracking-tighter">
-            Documentation
-          </h1>
-          <p className="mt-4 text-xl text-slate-400">
-            Guidelines and resources for contributors
+          <p className="text-lg leading-relaxed">
+            Peer Learning is an open-source platform designed to facilitate
+            collaborative learning and knowledge sharing among students,
+            developers, and enthusiasts. We believe in building a respectful,
+            inclusive, and productive learning environment.
           </p>
-        </motion.div>
+          <p className="mt-4 text-sm text-gray-500">
+            This Guidelines page serves as the single source of truth for all
+            project policies and expectations.
+          </p>
+        </section>
 
-        {/* Docs Accordion */}
-        <div className="mx-auto max-w-4xl space-y-6">
-          {docsSections.map((section, i) => (
-            <motion.div
-              key={section.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.08 }}
-              className="group rounded-3xl border border-white/12 bg-white/7 shadow-[0_12px_40px_rgba(2,6,23,0.28)] backdrop-blur-3xl overflow-hidden"
-            >
-              <button
-                onClick={() =>
-                  setOpenSection(openSection === section.id ? null : section.id)
-                }
-                className={`flex w-full items-center justify-between px-8 py-6 text-left transition-all duration-300 ${
-                  openSection === section.id
-                    ? "bg-cyan-400/10"
-                    : "hover:bg-white/5"
-                }`}
+        {/* 2. Getting Started */}
+        <section>
+          <div className="flex items-center gap-3 mb-6">
+            <Lightbulb className="w-8 h-8 text-amber-600" />
+            <h2 className="text-3xl font-semibold">Getting Started</h2>
+          </div>
+          <p className="mb-4">
+            New to the project? Here's how to get involved:
+          </p>
+          <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
+            <li>
+              Read the{" "}
+              <Link
+                href="https://github.com/durdana3105/peer-learning"
+                className="text-blue-600 hover:underline"
+                target="_blank"
               >
-                <div className="flex items-center gap-4">
-                  <div className="rounded-xl bg-cyan-400/10 p-3 text-cyan-400">
-                    {section.icon}
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-semibold">{section.title}</h2>
-                    <p className="text-sm text-slate-400">{section.category}</p>
-                  </div>
-                </div>
-
-                <motion.div
-                  animate={{ rotate: openSection === section.id ? 180 : 0 }}
-                  transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                >
-                  <ChevronDown className="h-6 w-6 text-slate-400" />
-                </motion.div>
-              </button>
-
-              <motion.div
-                initial={false}
-                animate={{
-                  height: openSection === section.id ? "auto" : 0,
-                  opacity: openSection === section.id ? 1 : 0,
-                }}
-                transition={{ duration: 0.4, ease: "easeInOut" }}
-                className="overflow-hidden"
+                README
+              </Link>
+            </li>
+            <li>
+              Set up the development environment following the repository
+              instructions
+            </li>
+            <li>
+              Familiarize yourself with our{" "}
+              <Link
+                href="#code-of-conduct"
+                className="text-blue-600 hover:underline"
               >
-                <div className="border-t border-white/10 px-8 pb-10 pt-6 text-slate-200/90 prose prose-invert max-w-none">
-                  <pre className="whitespace-pre-wrap font-mono text-sm leading-relaxed bg-black/30 p-6 rounded-2xl overflow-x-auto">
-                    {section.content.trim()}
-                  </pre>
-                </div>
-              </motion.div>
-            </motion.div>
-          ))}
-        </div>
+                Code of Conduct
+              </Link>
+            </li>
+            <li>Explore open issues and discussions on GitHub</li>
+          </ul>
+        </section>
 
-        {/* Footer Note */}
-        <div className="mt-20 text-center text-slate-500">
+        {/* 3. Contribution Guidelines */}
+        <section>
+          <div className="flex items-center gap-3 mb-6">
+            <GitPullRequest className="w-8 h-8 text-blue-600" />
+            <h2 className="text-3xl font-semibold">Contribution Guidelines</h2>
+          </div>
+          <p className="mb-4">
+            We welcome contributions of all kinds — code, documentation, bug
+            reports, feature ideas, and more.
+          </p>
+          <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-6 mb-6">
+            <p className="font-medium mb-3">Standard Contribution Flow:</p>
+            <ol className="list-decimal list-inside space-y-2 text-sm">
+              <li>Fork the repository</li>
+              <li>Clone your fork locally</li>
+              <li>Create a feature/fix branch</li>
+              <li>Make your changes</li>
+              <li>Commit with clear messages</li>
+              <li>Push and open a Pull Request</li>
+            </ol>
+          </div>
+          <Link
+            href="https://github.com/durdana3105/peer-learning/blob/main/CONTRIBUTING.md"
+            className="inline-flex items-center gap-2 text-blue-600 hover:underline font-medium"
+            target="_blank"
+          >
+            Read Full Contributing Guidelines →
+          </Link>
+        </section>
+
+        {/* 4. Code of Conduct */}
+        <section id="code-of-conduct">
+          <div className="flex items-center gap-3 mb-6">
+            <Users className="w-8 h-8 text-purple-600" />
+            <h2 className="text-3xl font-semibold">Code of Conduct</h2>
+          </div>
+          <p className="mb-4">
+            We are committed to creating a welcoming, respectful, and inclusive
+            environment for everyone.
+          </p>
+          <div className="prose dark:prose-in-dark text-sm">
+            <p>
+              <strong>Expected Behavior:</strong> Be respectful, use inclusive
+              language, accept feedback gracefully.
+            </p>
+            <p>
+              <strong>Unacceptable Behavior:</strong> Harassment,
+              discrimination, offensive language, personal attacks.
+            </p>
+          </div>
+          <Link
+            href="https://github.com/durdana3105/peer-learning/blob/main/CODE_OF_CONDUCT.md"
+            className="inline-flex items-center gap-2 text-blue-600 hover:underline font-medium mt-4"
+            target="_blank"
+          >
+            Read Full Code of Conduct →
+          </Link>
+        </section>
+
+        {/* 5. Security & Responsible Disclosure */}
+        <section>
+          <div className="flex items-center gap-3 mb-6">
+            <Shield className="w-8 h-8 text-green-600" />
+            <h2 className="text-3xl font-semibold">
+              Security &amp; Responsible Disclosure
+            </h2>
+          </div>
           <p>
-            Need help?{" "}
-            <a href="/contact" className="text-cyan-400 hover:underline">
-              Contact us
-            </a>{" "}
-            or open an issue on GitHub.
+            Security is taken seriously. If you discover a vulnerability, please
+            report it privately to the maintainers rather than opening a public
+            issue.
           </p>
-        </div>
+          <p className="mt-3 text-sm text-gray-500">
+            (A dedicated SECURITY.md will be added soon. For now, please contact
+            maintainers directly via GitHub.)
+          </p>
+        </section>
+
+        {/* 6. Reporting Issues and Feature Requests */}
+        <section>
+          <div className="flex items-center gap-3 mb-6">
+            <AlertTriangle className="w-8 h-8 text-amber-600" />
+            <h2 className="text-3xl font-semibold">
+              Reporting Issues and Feature Requests
+            </h2>
+          </div>
+          <p>
+            Found a bug? Have a feature idea? Please open an issue with a clear
+            title, description, and reproduction steps (if applicable).
+          </p>
+          <Link
+            href="https://github.com/durdana3105/peer-learning/issues"
+            className="inline-flex items-center gap-2 text-blue-600 hover:underline font-medium mt-4"
+            target="_blank"
+          >
+            Open a New Issue →
+          </Link>
+        </section>
+
+        {/* 7. Pull Request Expectations */}
+        <section>
+          <div className="flex items-center gap-3 mb-6">
+            <GitPullRequest className="w-8 h-8 text-blue-600" />
+            <h2 className="text-3xl font-semibold">
+              Pull Request Expectations
+            </h2>
+          </div>
+          <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
+            <li>Keep PRs focused on a single change</li>
+            <li>Use clear, descriptive commit messages</li>
+            <li>Ensure all tests pass</li>
+            <li>Update documentation when needed</li>
+            <li>Follow existing code style and project structure</li>
+            <li>Be responsive to review comments</li>
+            <li>Link related issues in the PR description</li>
+          </ul>
+        </section>
+
+        {/* 8. Community Resources */}
+        <section>
+          <div className="flex items-center gap-3 mb-6">
+            <MessageSquare className="w-8 h-8 text-rose-600" />
+            <h2 className="text-3xl font-semibold">Community Resources</h2>
+          </div>
+          <p>
+            We encourage open and respectful communication. Feel free to ask
+            questions, share ideas, and help others in the community.
+          </p>
+          <p className="mt-4 text-sm text-gray-500">
+            More communication channels (Discord, discussions, etc.) will be
+            added as the community grows.
+          </p>
+        </section>
+      </div>
+
+      <div className="mt-20 border-t border-gray-200 dark:border-gray-800 pt-8 text-center text-sm text-gray-500">
+        Last updated:{" "}
+        {new Date().toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })}{" "}
+        • This page is part of the official project documentation.
       </div>
     </div>
   );
