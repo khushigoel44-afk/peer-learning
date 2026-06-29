@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "tsx watch server.ts",
-    "start": "tsx server.ts"
+    "dev": "tsx watch server.js",
+    "start": "tsx server.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.102.1",
@@ -23,6 +23,7 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
-    "supertest": "^7.2.2"
+    "supertest": "^7.2.2",
+    "tsx": "^4.22.4"
   }
 }
