@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { AUTH_SERVICE_UNAVAILABLE_MESSAGE, runSupabaseAuthRequest } from "@/lib/supabaseAuthErrors";
 
 // ✅ Proper TypeScript type
 type FormErrors = {
@@ -25,6 +26,7 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [authError, setAuthError] = useState<string | null>(null);
   const [errors, setErrors] = useState<FormErrors>({});
 
   const { user, loading, signUp } = useAuth();
@@ -77,6 +79,7 @@ const Signup = () => {
     if (!validate()) return;
 
     setIsLoading(true);
+    setAuthError(null);
 
     const { error } = await signUp(email, password, name);
 
@@ -84,6 +87,7 @@ const Signup = () => {
 
     // Handle signup errors
     if (error) {
+      setAuthError(error.message);
       toast({
         title: "Signup failed",
         description: error.message,
@@ -105,34 +109,41 @@ const Signup = () => {
   };
 
   const handleGoogleLogin = async () => {
+    setAuthError(null);
+
     if (supabaseMisconfigured) {
+      setAuthError(AUTH_SERVICE_UNAVAILABLE_MESSAGE);
       toast({
         title: "Not configured",
-        description:
-          "Supabase environment variables are not set. Configure VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY.",
+        description: AUTH_SERVICE_UNAVAILABLE_MESSAGE,
         variant: "destructive",
       });
       return;
     }
 
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
+    setIsLoading(true);
+
+    const { error } = await runSupabaseAuthRequest(() =>
+      supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
           redirectTo: `${window.location.origin}/auth/callback`,
         },
-      });
+      })
+    );
 
-      if (error) {
-        toast({
-          title: "Google login failed",
-          description: error.message,
-          variant: "destructive",
-        });
-      }
-    } catch (err) {
-      console.error("Uncaught exception in signInWithOAuth:", err);
+    if (error) {
+      setIsLoading(false);
+      setAuthError(error.message);
+      toast({
+        title: "Google login failed",
+        description: error.message,
+        variant: "destructive",
+      });
+      return;
     }
+
+    setIsLoading(false);
   };
 
   if (loading) {
@@ -238,6 +249,14 @@ const Signup = () => {
 
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-4">
+            {authError && (
+              <div
+                role="alert"
+                className="rounded-md border border-red-400/40 bg-red-500/10 px-4 py-3 text-left text-sm font-medium text-red-100"
+              >
+                {authError}
+              </div>
+            )}
 
             {/* Name */}
             <Input
